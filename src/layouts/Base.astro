@@ -1,0 +1,75 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { url } from '../utils/url.js';
+import { site } from '../data/site.js';
+
+const { title, description } = Astro.props;
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · Darts in Salzburg-Maxglan`;
+const desc =
+  description ||
+  'Dart Lounge Mitte – eingetragener Dart-Verein in Salzburg-Maxglan. Spielen, Turniere, Teams. Mo–Sa ab 18:00. Komm vorbei!';
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={desc} />
+    {/* Vorschau-Phase: nicht indexieren. Beim echten Launch entfernen. */}
+    <meta name="robots" content="noindex" />
+    {/* Favicon: D•L-Monogramm-Kachel */}
+    <link rel="icon" href={url('/favicon-32.png')} sizes="32x32" type="image/png" />
+    <link rel="icon" href={url('/favicon-16.png')} sizes="16x16" type="image/png" />
+    <link rel="icon" href={url('/icon-192.png')} sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+    <meta name="theme-color" content="#191209" />
+
+    {/* Reveal früh aktivieren, damit Blöcke sanft starten – ohne JS bleibt alles sichtbar. */}
+    <script is:inline>
+      if (window.IntersectionObserver && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('reveal-on');
+      }
+    </script>
+
+    {/* Open Graph / Social */}
+    <meta property="og:type" content="business.business" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:locale" content="de_AT" />
+
+    {/* Local-Business Schema für Google */}
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BarOrClub',
+      name: site.name,
+      description: desc,
+      telephone: site.phoneHref,
+      address: { '@type': 'PostalAddress', addressLocality: 'Salzburg', addressCountry: 'AT' },
+      openingHours: 'Mo-Sa 18:00-23:00',
+      sameAs: [site.facebook],
+    })} />
+  </head>
+  <body>
+    <Header />
+    <main><slot /></main>
+    <Footer />
+    <script>
+      const items = document.querySelectorAll('.reveal');
+      if (items.length && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+          }
+        }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+        items.forEach((el) => io.observe(el));
+        // Sicherheitsnetz: falls der Observer etwas verpasst, nach kurzer Zeit einblenden.
+        setTimeout(() => items.forEach((el) => el.classList.add('in')), 1600);
+      } else {
+        items.forEach((el) => el.classList.add('in'));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+---
+// Interaktive Dartscheibe fürs Hero.
+// Der Pfeil zielt auf den Cursor, Klick = Wurf mit Punkte-Anzeige.
+// Schrift 'Barlow Condensed' wird selbst gehostet (siehe global.css) – kein Google-CDN.
+---
+<div class="dart-logo" id="dartLogo" aria-hidden="true"></div>
+
+<style>
+  .dart-logo {
+    width: 100%; aspect-ratio: 1; cursor: crosshair;
+    filter: drop-shadow(0 26px 54px rgba(0, 0, 0, .55));
+    /* Eindrehen beim Laden. Läuft auf dem Host – das JS animiert nur Gruppen
+       im SVG (Atmen/Sweep), daher kein Transform-Konflikt. */
+    animation: board-spin-in 1s ease-out both;
+  }
+  .dart-logo :global(svg) { width: 100%; height: 100%; display: block; }
+
+  @keyframes board-spin-in {
+    from { opacity: 0; transform: rotate(-14deg) scale(.9); }
+    to   { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dart-logo { animation: none; }
+  }
+</style>
+
+<script>
+  function DartLogo(host, userOpts) {
+    const NS = 'http://www.w3.org/2000/svg', CX = 260, CY = 260;
+    const NUMS = [20,1,18,4,13,6,10,15,2,17,3,19,7,16,8,11,14,9,12,5];
+    const p = { surround:'#241a12', numberBg:'#0e0a06', dark:'#241b12', cream:'#efe3ca',
+      red:'#c14a3f', green:'#9fb489', gold:'#e6b45e', wire:'#cbb078',
+      dart:{ tip:'#e9e2d2', shaft:'#d9cfb8', barrel:'#c9c0ad', flight:'#e6b45e', flightEdge:'#a97f2f' } };
+    const o = Object.assign({ innerBull:6, outerBull:15, tripleInner:86, tripleOuter:94,
+      doubleInner:142, doubleOuter:150, numR:164, surroundR:214, textR:184,
+      topText:'DART LOUNGE · MITTE', botText:'· EST. 2024 ·', textSize:15, ls:'0.14em' }, userOpts || {});
+
+    const el = (t,a,par) => { const e = document.createElementNS(NS,t); for (const k in a) e.setAttribute(k,a[k]); if (par) par.appendChild(e); return e; };
+    const polar = (r,d) => { const a = d*Math.PI/180; return [CX+r*Math.cos(a), CY+r*Math.sin(a)]; };
+    const sec = (r0,r1,d0,d1) => { const [x0,y0]=polar(r0,d0),[x1,y1]=polar(r1,d0),[x2,y2]=polar(r1,d1),[x3,y3]=polar(r0,d1);
+      const lg = Math.abs(d1-d0) > 180 ? 1 : 0;
+      return `M${x0} ${y0} L${x1} ${y1} A${r1} ${r1} 0 ${lg} 1 ${x2} ${y2} L${x3} ${y3} A${r0} ${r0} 0 ${lg} 0 ${x0} ${y0} Z`; };
+    const arc = (r,d0,d1,sw) => { const [x0,y0]=polar(r,d0),[x1,y1]=polar(r,d1); return `M${x0} ${y0} A${r} ${r} 0 0 ${sw} ${x1} ${y1}`; };
+    const dart = (par) => { const g = el('g',{},par);
+      el('polygon',{ points:'0,0 9,-3.5 9,3.5', fill:p.dart.tip }, g);
+      el('rect',{ x:9, y:-1.4, width:46, height:2.8, rx:1, fill:p.dart.shaft }, g);
+      el('rect',{ x:32, y:-2.4, width:22, height:4.8, rx:1.4, fill:p.dart.barrel }, g);
+      el('polygon',{ points:'54,0 66,-10 84,0 66,10', fill:p.dart.flight }, g);
+      el('polygon',{ points:'54,0 66,-10 84,0 66,10', fill:'none', stroke:p.dart.flightEdge, 'stroke-width':1 }, g);
+      return g; };
+
+    const svg = el('svg',{ viewBox:'0 0 520 520' }, host);
+    const root = el('g',{},svg);
+    el('circle',{ cx:CX, cy:CY, r:o.surroundR, fill:p.surround }, root);
+    el('circle',{ cx:CX, cy:CY, r:o.surroundR-2, fill:'none', stroke:p.gold, 'stroke-width':2 }, root);
+    el('circle',{ cx:CX, cy:CY, r:o.surroundR-13, fill:'none', stroke:p.gold, 'stroke-width':1, opacity:.5 }, root);
+
+    const board = el('g',{ style:'transform-origin:260px 260px;' }, root);
+    el('circle',{ cx:CX, cy:CY, r:o.doubleOuter+2, fill:p.numberBg }, board);
+    for (let i=0;i<20;i++) { const c=-90+18*i, d0=c-9, d1=c+9;
+      const single = i%2 ? p.cream : p.dark, ring = i%2 ? p.green : p.red;
+      el('path',{ d:sec(o.tripleOuter,o.doubleInner,d0,d1), fill:single }, board);
+      el('path',{ d:sec(o.outerBull,o.tripleInner,d0,d1), fill:single }, board);
+      el('path',{ d:sec(o.doubleInner,o.doubleOuter,d0,d1), fill:ring }, board);
+      el('path',{ d:sec(o.tripleInner,o.tripleOuter,d0,d1), fill:ring }, board); }
+    for (let i=0;i<20;i++) { const b=-90+18*i+9, [x0,y0]=polar(o.outerBull,b), [x1,y1]=polar(o.doubleOuter,b);
+      el('line',{ x1:x0, y1:y0, x2:x1, y2:y1, stroke:p.wire, 'stroke-width':.8, opacity:.55 }, board); }
+    [o.tripleInner,o.tripleOuter,o.doubleInner,o.doubleOuter].forEach(r =>
+      el('circle',{ cx:CX, cy:CY, r, fill:'none', stroke:p.wire, 'stroke-width':.8, opacity:.5 }, board));
+    const sweep = el('path',{ d:sec(o.outerBull,o.doubleOuter,-99,-81), fill:p.gold, opacity:.16,
+      style:'transform-origin:260px 260px;transition:transform .13s linear;mix-blend-mode:screen;' }, board);
+    el('circle',{ cx:CX, cy:CY, r:o.outerBull, fill:p.green }, board);
+    el('circle',{ cx:CX, cy:CY, r:o.innerBull, fill:p.red }, board);
+    for (let i=0;i<20;i++) { const c=-90+18*i, [tx,ty]=polar(o.numR,c);
+      const t = el('text',{ x:tx, y:ty, fill:p.cream, 'font-family':"'Barlow Condensed',sans-serif",
+        'font-weight':600, 'font-size':15, 'text-anchor':'middle', 'dominant-baseline':'central' }, board);
+      t.textContent = NUMS[i]; }
+
+    const defs = el('defs',{},svg);
+    // IDs bewusst mit Präfix: 'top' kollidierte mit dem Seitenanker <span id="top">,
+    // dadurch fand der textPath den falschen Knoten und der Text blieb unsichtbar.
+    [['dl-arc-top',o.topText,arc(o.textR,180,360,1)],['dl-arc-bot',o.botText,arc(o.textR,180,360,0)]].forEach(([id,txt,d]) => {
+      if (!txt) return; el('path',{ id, d, fill:'none' }, defs);
+      const t = el('text',{ fill:p.gold, 'font-family':"'Barlow Condensed',sans-serif",
+        'font-weight':600, 'font-size':o.textSize, 'letter-spacing':o.ls }, svg);
+      const tp = el('textPath',{ href:'#'+id, startOffset:'50%', 'text-anchor':'middle' }, t);
+      tp.textContent = txt; });
+
+    const aimG = el('g',{ opacity:0, style:'transition:opacity .2s;' }, svg);
+    const aimIn = el('g',{ transform:`translate(${CX+o.doubleOuter+6} ${CY})` }, aimG); dart(aimIn);
+    const stuckG = el('g',{},svg);
+    const scoreT = el('text',{ x:CX, y:34, fill:p.gold, 'font-family':"'Barlow Condensed',sans-serif",
+      'font-weight':600, 'font-size':26, 'text-anchor':'middle', opacity:0 }, svg);
+
+    const toView = e => { const r = svg.getBoundingClientRect(); return [(e.clientX-r.left)/r.width*520, (e.clientY-r.top)/r.height*520]; };
+    svg.addEventListener('mousemove', e => { const [vx,vy] = toView(e);
+      aimG.setAttribute('transform', `rotate(${Math.atan2(vy-CY,vx-CX)*180/Math.PI} ${CX} ${CY})`);
+      aimG.style.opacity = 1; });
+    svg.addEventListener('mouseleave', () => aimG.style.opacity = 0);
+
+    const scoreFor = (r,deg) => { if (r <= o.innerBull) return { n:50, l:'BULLSEYE' };
+      if (r <= o.outerBull) return { n:25, l:'25' };
+      if (r > o.doubleOuter) return { n:0, l:'MISS' };
+      let i = ((Math.round((deg+90)/18)%20)+20)%20; const b = NUMS[i];
+      if (r >= o.tripleInner && r <= o.tripleOuter) return { n:b*3, l:'TRIPLE '+b };
+      if (r >= o.doubleInner) return { n:b*2, l:'DOUBLE '+b };
+      return { n:b, l:''+b }; };
+
+    let stuck = [];
+    svg.addEventListener('click', e => { const [vx,vy] = toView(e);
+      const dx = vx-CX, dy = vy-CY, ang = Math.atan2(dy,dx), dist = Math.min(Math.hypot(dx,dy), o.doubleOuter-3);
+      const lx = CX+dist*Math.cos(ang), ly = CY+dist*Math.sin(ang), deg = ang*180/Math.PI;
+      if (stuck.length >= 4) { stuck.forEach(s => s.remove()); stuck = []; }
+      const g = el('g',{ transform:`translate(${lx} ${ly}) rotate(${deg})` }, stuckG); dart(g); stuck.push(g);
+      const fx = lx+130*Math.cos(ang), fy = ly+130*Math.sin(ang);
+      g.animate([{ transform:`translate(${fx}px ${fy}px) rotate(${deg}deg) scale(1.15)`, opacity:0 },
+                 { transform:`translate(${lx}px ${ly}px) rotate(${deg}deg) scale(1)`, opacity:1 }],
+        { duration:240, easing:'cubic-bezier(.3,1.4,.5,1)', fill:'backwards' });
+      const imp = el('circle',{ cx:lx, cy:ly, r:2, fill:'none', stroke:p.gold, 'stroke-width':2 }, stuckG);
+      imp.animate([{ r:2, opacity:.9 }, { r:22, opacity:0 }], { duration:420, easing:'ease-out' });
+      setTimeout(() => imp.remove(), 440);
+      const sc = scoreFor(dist,deg);
+      scoreT.textContent = sc.l + (sc.n ? '  ·  '+sc.n : '');
+      scoreT.setAttribute('fill', sc.n ? p.gold : '#b7a98c');
+      scoreT.animate([{ opacity:0, transform:'translateY(-6px)' }, { opacity:1 }, { opacity:1 }, { opacity:0 }],
+        { duration:1300, easing:'ease-out' }); });
+
+    // Dauer-Animation (Atmen + Sweep) nur, wenn der Nutzer Bewegung nicht abgelehnt hat.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let k = 0, last = 0; const t0 = performance.now();
+      (function tick(t) {
+        board.style.transform = `scale(${1+Math.sin((t-t0)/1400)*.012})`;
+        if (t-last > 150) { last = t; k = (k+1)%20; sweep.style.transform = `rotate(${k*18}deg)`; }
+        requestAnimationFrame(tick);
+      })(t0);
+    } else {
+      sweep.style.display = 'none';
+    }
+  }
+
+  const host = document.getElementById('dartLogo');
+  if (host) DartLogo(host);
+</script>

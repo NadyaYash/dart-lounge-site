@@ -1,0 +1,168 @@
+/* ============================================================
+   Dart Lounge Mitte – globale Styles
+   Warmes Lounge-Theme: Espresso + Messing + Weinrot.
+   Schriften: Anton (Display, Plakat) + Manrope (Text).
+   ============================================================ */
+
+@font-face {
+  font-family: 'Anton';
+  font-style: normal; font-weight: 400; font-display: swap;
+  src: url('/fonts/anton.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal; font-weight: 400 800; font-display: swap;
+  src: url('/fonts/manrope.woff2') format('woff2');
+}
+/* Nur für die Zahlen/Texte auf der Dartscheibe im Hero. Selbst gehostet – kein Google-CDN. */
+@font-face {
+  font-family: 'Barlow Condensed';
+  font-style: normal; font-weight: 600; font-display: swap;
+  src: url('/fonts/barlow-condensed-600.woff2') format('woff2');
+}
+
+:root {
+  /* Warmes Grund-Set (Espresso, leicht rot-braun getönt) */
+  --bg: #191310;
+  --bg-2: #1f1712;
+  --surface: #271d16;
+  --surface-2: #31251c;
+  --border: #3d2f24;
+  --border-soft: #2c2119;
+
+  /* Creme-Text */
+  --text: #f3ece0;
+  --text-soft: #c6b7a4;
+  --text-mute: #93826f;
+
+  /* Akzent 1: Messing / Bernstein (warm, nicht grell) */
+  --accent: #e6b25a;
+  --accent-600: #d69a3c;
+  --accent-700: #b87f28;
+  --accent-ink: #2a1c0a;       /* dunkle Schrift auf Messing */
+
+  /* Akzent 2: Weinrot / Oxblood (Dartscheiben-Rot, gedämpft) */
+  --red: #c0453b;
+  --red-600: #a5352c;
+
+  /* Nur für Deko / Dartscheibe */
+  --sage: #9aad84;
+  --board-cream: #e9dcc0;
+
+  --radius: 12px;
+  --radius-lg: 18px;
+  --pill: 999px;
+  --maxw: 1240px;
+  --font: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --display: 'Anton', 'Arial Narrow', Impact, system-ui, sans-serif;
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, .35);
+
+  /* Team-/Akzent-Chips (warm abgestimmt) */
+  --c-brass-bg:#2f2411; --c-brass-fg:#eabf6d;
+  --c-red-bg:  #311714; --c-red-fg:  #e8938a;
+  --c-teal-bg: #142723; --c-teal-fg: #77c6a6;
+  --c-sage-bg: #1f2617; --c-sage-fg: #a9c088;
+  --c-plum-bg: #271826; --c-plum-fg: #cd9dc4;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--text);
+  background:
+    radial-gradient(1100px 560px at 82% -6%, rgba(230, 178, 90, .12), transparent 58%),
+    radial-gradient(820px 480px at 4% 2%, rgba(192, 69, 59, .10), transparent 55%),
+    var(--bg);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { margin: 0 0 .5em; line-height: 1.05; }
+.display, h1, h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .005em;
+  line-height: .98;
+}
+h1 { font-size: clamp(2.6rem, 7.5vw, 5rem); }
+h2 { font-size: clamp(1.9rem, 4.4vw, 3rem); }
+h3 { font-family: var(--font); font-weight: 800; font-size: 1.18rem; line-height: 1.2; letter-spacing: -.01em; }
+p { margin: 0 0 1rem; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; display: block; }
+
+.container { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+.section { padding: 82px 0; }
+.section--tight { padding: 46px 0; }
+.section--alt { background: var(--bg-2); border-block: 1px solid var(--border-soft); }
+.muted { color: var(--text-soft); }
+.center { text-align: center; }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font); font-size: .78rem; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 1rem;
+}
+.eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--accent); border-radius: 2px; }
+.lead { font-size: 1.2rem; color: var(--text-soft); max-width: 60ch; line-height: 1.6; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 13px 24px; border-radius: var(--pill);
+  font-family: var(--font); font-weight: 700; font-size: .98rem; text-decoration: none;
+  border: 1.5px solid transparent; cursor: pointer; transition: .16s ease; white-space: nowrap;
+}
+.btn:hover { text-decoration: none; transform: translateY(-1px); }
+.btn--primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 8px 22px rgba(230,178,90,.22); }
+.btn--primary:hover { background: #f1c56b; }
+.btn--ghost { border-color: var(--border); color: var(--text); background: rgba(255,255,255,.02); }
+.btn--ghost:hover { border-color: var(--accent); color: var(--accent); }
+.btn--lg { padding: 15px 30px; font-size: 1.05rem; }
+
+/* Chips */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  padding: 5px 12px; border-radius: var(--pill);
+  background: var(--c-brass-bg); color: var(--c-brass-fg);
+}
+.chip--brass { background: var(--c-brass-bg); color: var(--c-brass-fg); }
+.chip--red   { background: var(--c-red-bg);   color: var(--c-red-fg); }
+.chip--teal  { background: var(--c-teal-bg);  color: var(--c-teal-fg); }
+.chip--sage  { background: var(--c-sage-bg);  color: var(--c-sage-fg); }
+.chip--plum  { background: var(--c-plum-bg);  color: var(--c-plum-fg); }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  transition: .18s ease;
+}
+.card:hover { border-color: var(--accent-700); transform: translateY(-3px); box-shadow: var(--shadow-sm); }
+
+.grid { display: grid; gap: 20px; }
+.grid--3 { grid-template-columns: repeat(3, 1fr); }
+.grid--2 { grid-template-columns: repeat(2, 1fr); }
+
+@media (max-width: 860px) {
+  .grid--3, .grid--2 { grid-template-columns: 1fr; }
+  .section { padding: 60px 0; }
+}
+
+/* Reveal – progressive enhancement (ohne JS ist alles sichtbar) */
+html.reveal-on .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+html.reveal-on .reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html.reveal-on .reveal { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+}

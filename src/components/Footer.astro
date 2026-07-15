@@ -1,0 +1,50 @@
+---
+import { site } from '../data/site.js';
+const year = 2026;
+---
+<footer class="ft">
+  <div class="container ft__inner">
+    <div>
+      <div class="ft__brand">Dart Lounge <span>Mitte</span></div>
+      <p class="muted ft__tag">{site.tagline}</p>
+      <a href={site.facebook} class="ft__fb" target="_blank" rel="noopener">Facebook →</a>
+    </div>
+
+    <div>
+      <h4>Öffnungszeiten</h4>
+      {site.hours.map((h) => (
+        <p class="ft__row"><span>{h.d}</span><b>{h.t}</b></p>
+      ))}
+    </div>
+
+    <div>
+      <h4>Kontakt</h4>
+      <p class="ft__row"><a href={`tel:${site.phoneHref}`}>{site.phone}</a></p>
+      <p class="ft__row muted">{site.addressFull}</p>
+      <p class="ft__row muted ft__todo">Adresse noch eintragen</p>
+    </div>
+  </div>
+
+  <div class="container ft__bar">
+    <span class="muted">© {year} {site.name} · Eingetragener Verein</span>
+    <span class="muted"><a href="#">Impressum</a> · <a href="#">Datenschutz</a></span>
+  </div>
+</footer>
+
+<style>
+  .ft { border-top: 1px solid var(--border); background: var(--bg-2); padding: 52px 0 24px; margin-top: 20px; }
+  .ft__inner { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 34px; }
+  .ft__brand { font-weight: 800; font-size: 1.3rem; }
+  .ft__brand span { color: var(--accent); }
+  .ft__tag { margin-top: 6px; max-width: 32ch; }
+  .ft__fb { font-weight: 700; }
+  .ft h4 { font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; color: var(--text-mute); margin-bottom: 12px; }
+  .ft__row { margin: 0 0 6px; display: flex; justify-content: space-between; gap: 14px; }
+  .ft__todo { font-size: .82rem; font-style: italic; color: var(--red); }
+  .ft__bar {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    border-top: 1px solid var(--border-soft); margin-top: 34px; padding-top: 20px; font-size: .88rem;
+  }
+  .ft__bar a { color: var(--text-soft); }
+  @media (max-width: 820px) { .ft__inner { grid-template-columns: 1fr; gap: 26px; } }
+</style>

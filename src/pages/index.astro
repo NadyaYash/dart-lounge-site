@@ -1,0 +1,286 @@
+---
+import Base from '../layouts/Base.astro';
+import DartLogo from '../components/DartLogo.astro';
+import IconPhone from '../components/IconPhone.astro';
+import { url } from '../utils/url.js';
+import { site } from '../data/site.js';
+import { teams } from '../data/teams.js';
+import { events, upcoming } from '../data/events.js';
+
+const today = '2026-07-14';
+const next = upcoming(events, today);
+const list = next.length ? next : [...events].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4);
+const isPast = next.length === 0;
+
+const offers = [
+  { icon: '🎯', title: 'Einfach vorbeikommen', text: 'Ohne Anmeldung reinschauen, Board schnappen und loslegen. Steel- und Soft-Darts vorhanden.' },
+  { icon: '📅', title: 'Board reservieren', text: 'Mit Freunden einen Abend planen? Ruf an und wir halten euch ein Board frei.' },
+  { icon: '🍺', title: 'Lounge & Getränke', text: 'Gemütliche Atmosphäre, kühle Getränke und nette Leute – der perfekte Feierabend.' },
+];
+
+const fmt = (iso) => {
+  const [y, m, d] = iso.split('-');
+  return `${d}.${m}.${y}`;
+};
+---
+<Base>
+  <span id="top"></span>
+
+  {/* ============ HERO ============ */}
+  <section class="hero">
+    <div class="container hero__grid">
+      <div class="hero__copy reveal">
+        <span class="eyebrow">Eingetragener Dart-Verein · Salzburg-Maxglan</span>
+        <h1>Bei uns dreht sich<br />alles um <span class="hl">Darts</span>.</h1>
+        <p class="lead">{site.intro}</p>
+        <div class="hero__cta">
+          <a href={`tel:${site.phoneHref}`} class="btn btn--primary btn--lg"><IconPhone /> {site.phone}</a>
+          <a href="#kontakt" class="btn btn--ghost btn--lg">So findest du uns</a>
+        </div>
+        <div class="hero__hours">
+          <b>Mo – Sa&nbsp;</b> 18:00 – 23:00 &nbsp;·&nbsp; <span class="muted">Sonntag Ruhetag</span>
+        </div>
+      </div>
+      {/* Kein .reveal hier: die Scheibe dreht sich beim Laden selbst ein (siehe DartLogo). */}
+      <div class="hero__board">
+        <DartLogo />
+      </div>
+    </div>
+  </section>
+
+  {/* ============ STATS ============ */}
+  <section class="section--tight stats-wrap">
+    <div class="container stats">
+      {site.stats.map((s) => (
+        <div class="stat reveal">
+          <div class="stat__n">{s.n}</div>
+          <div class="stat__l muted">{s.label}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ============ SPIELEN ============ */}
+  <section id="spielen" class="section section--alt">
+    <div class="container">
+      <div class="center reveal">
+        <span class="eyebrow">Für Gäste</span>
+        <h2>Komm spielen – ganz ohne Vorkenntnisse</h2>
+        <p class="lead" style="margin: 0 auto 34px;">Egal ob zum ersten Mal oder als alter Hase: bei uns ist jeder willkommen.</p>
+      </div>
+      <div class="grid grid--3">
+        {offers.map((o) => (
+          <div class="card reveal">
+            <div class="offer__icon">{o.icon}</div>
+            <h3>{o.title}</h3>
+            <p class="muted" style="margin:0;">{o.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ============ EVENTS ============ */}
+  <section id="events" class="section">
+    <div class="container">
+      <div class="sec-head reveal">
+        <div>
+          <span class="eyebrow">Termine</span>
+          <h2>Turniere & Spielabende</h2>
+        </div>
+        <a href={site.facebook} class="btn btn--ghost" target="_blank" rel="noopener">Alle Termine auf Facebook →</a>
+      </div>
+      {isPast && <p class="muted" style="margin-top:-8px;">Zuletzt bei uns – neue Termine folgen in Kürze:</p>}
+      <div class="events">
+        {list.map((e) => (
+          <div class="event card reveal">
+            <div class="event__date">
+              <span class="event__day">{e.date.split('-')[2]}</span>
+              <span class="event__mon">{['Jän','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'][+e.date.split('-')[1]-1]}</span>
+            </div>
+            <div class="event__body">
+              <div class="event__top">
+                <span class={`chip chip--${e.tag === 'Turnier' ? 'red' : 'teal'}`}>{e.tag}</span>
+                {e.time && <span class="muted event__time">{e.time} Uhr</span>}
+              </div>
+              <h3 style="margin:.2rem 0 .3rem;">{e.title}</h3>
+              <p class="muted" style="margin:0;">{e.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ============ TEAMS ============ */}
+  <section id="teams" class="section section--alt">
+    <div class="container">
+      <div class="center reveal">
+        <span class="eyebrow">Der Verein</span>
+        <h2>Unsere Teams</h2>
+        <p class="lead" style="margin: 0 auto 34px;">Fünf Mannschaften – von der Liga bis zur Hobby-Runde. Lust mitzuspielen? Sprich uns an.</p>
+      </div>
+      <div class="grid grid--3">
+        {teams.map((t) => (
+          <div class={`card team reveal team--${t.color}`}>
+            <span class={`chip chip--${t.color}`}>{t.tag}</span>
+            <h3 style="margin:.6rem 0 .3rem;">{t.name}</h3>
+            <p class="muted" style="margin:0;">{t.desc}</p>
+          </div>
+        ))}
+        <div class="card team team--join reveal">
+          <h3>Neu dabei?</h3>
+          <p class="muted" style="margin:0 0 16px;">Wir freuen uns über jeden, der einen Pfeil werfen will.</p>
+          <a href={`tel:${site.phoneHref}`} class="btn btn--primary">Mitmachen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ============ FEIERN ============ */}
+  <section id="feiern" class="section">
+    <div class="container feiern reveal">
+      <div>
+        <span class="eyebrow">Für Gruppen</span>
+        <h2>Geburtstag, Firmenfeier<br />oder Junggesellenabschied?</h2>
+        <p class="lead">Feiert bei uns! Dartsturnier für die Gruppe, entspannte Lounge-Atmosphäre und Getränke. Wir stellen alles bereit – ihr müsst nur treffen.</p>
+        <a href={`tel:${site.phoneHref}`} class="btn btn--primary btn--lg"><IconPhone /> Anfragen: {site.phone}</a>
+      </div>
+      <ul class="feiern__list">
+        <li>🎯 Boards exklusiv für eure Gruppe</li>
+        <li>🏆 Eigenes Mini-Turnier auf Wunsch</li>
+        <li>🍻 Getränke direkt vor Ort</li>
+        <li>👥 Ideal für 6 – 20 Personen</li>
+      </ul>
+    </div>
+  </section>
+
+  {/* ============ GALERIE (Platzhalter für FB-Fotos) ============ */}
+  <section class="section section--alt">
+    <div class="container">
+      <div class="center reveal">
+        <span class="eyebrow">Atmosphäre</span>
+        <h2>So sieht's bei uns aus</h2>
+        <p class="muted" style="margin-bottom:28px;">Fotos aus der Lounge – hier kommen echte Bilder von Facebook rein.</p>
+      </div>
+      <div class="gallery">
+        {['Lounge & Bar','Spielabend','Turnier-Action','Pokale & Team','Board-Wand','Feier'].map((cap, i) => (
+          <div class={`ph reveal ph--${i % 3}`}><span>📷 {cap}</span></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ============ KONTAKT ============ */}
+  <section id="kontakt" class="section">
+    <div class="container kontakt">
+      <div class="reveal">
+        <span class="eyebrow">Kontakt</span>
+        <h2>Schau vorbei</h2>
+        <div class="kv"><span class="kv__k">Telefon</span><a href={`tel:${site.phoneHref}`} class="kv__v kv__link">{site.phone}</a></div>
+        <div class="kv"><span class="kv__k">Öffnungszeiten</span><span class="kv__v">Mo – Sa · 18:00 – 23:00<br /><span class="muted">Sonntag Ruhetag</span></span></div>
+        <div class="kv"><span class="kv__k">Adresse</span><span class="kv__v">{site.addressFull}<br /><span class="gold-note">↳ genaue Adresse noch eintragen</span></span></div>
+        <div class="kv"><span class="kv__k">Facebook</span><a href={site.facebook} class="kv__v kv__link" target="_blank" rel="noopener">/DartLoungeMitte</a></div>
+      </div>
+      {/* Statische Karte, selbst gehostet: funktioniert ohne WebGL/JS und schickt
+          keine Besucherdaten an Dritte. Kartenbild aus OpenStreetMap-Kacheln. */}
+      <div class="map reveal">
+        <img class="map__img" src={url('/map-maxglan.jpg')} width="900" height="460"
+             loading="lazy" decoding="async" alt="Karte von Salzburg-Maxglan" />
+        <div class="map__bar">
+          <a class="map__link" href={`https://www.google.com/maps/search/${encodeURIComponent(site.mapsQuery)}`} target="_blank" rel="noopener">In Google Maps öffnen →</a>
+          <span class="map__attr">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { padding: clamp(48px, 7vw, 88px) 0 60px; }
+  /* Spalten fast gleich: die Scheibe braucht Platz, damit sie zur großen Headline passt. */
+  .hero__grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 32px; align-items: center; }
+  /* vw-Faktor bewusst kleiner als bei der globalen h1: die Textspalte wächst
+     langsamer als der Viewport, sonst bricht "Bei uns dreht sich" zwischen
+     ~900 und ~1200px in eine dritte Zeile mit einzelnem "SICH" um. */
+  .hero h1 { font-size: clamp(2.3rem, 6.2vw, 5rem); }
+  .hl { color: var(--accent); position: relative; }
+  .hero__cta { display: flex; gap: 12px; flex-wrap: wrap; margin: 26px 0 20px; }
+  .hero__hours { font-size: 1rem; color: var(--text-soft); border-top: 1px solid var(--border-soft); padding-top: 18px; }
+  .hero__hours b { color: var(--text); }
+  /* Die Scheibe hat im SVG ringsum ~9% Luft (Platz für Zielpfeil + Punkteanzeige),
+     deshalb ist die Box bewusst größer als die sichtbare Scheibe. */
+  /* width:100% ist Pflicht – ohne sie macht margin-inline:auto aus dem Grid-Item ein
+     "shrink-to-fit" und das SVG bleibt auf seiner Standardbreite von 300px hängen. */
+  .hero__board { position: relative; width: 100%; max-width: 560px; margin-inline: auto; }
+  /* Warmer Schein dahinter, damit die Scheibe im Hintergrund sitzt statt aufgeklebt zu wirken. */
+  .hero__board::before {
+    content: ""; position: absolute; inset: 6%; border-radius: 50%; z-index: 0;
+    background: radial-gradient(circle, rgba(230,178,90,.16), rgba(230,178,90,.04) 55%, transparent 72%);
+    filter: blur(26px);
+  }
+  .hero__board > * { position: relative; z-index: 1; }
+  @media (max-width: 860px) {
+    .hero__grid { grid-template-columns: 1fr; gap: 24px; }
+    .hero__board { max-width: 380px; order: -1; }
+  }
+
+  .stats-wrap { border-block: 1px solid var(--border-soft); background: var(--bg-2); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .stat { text-align: center; }
+  .stat__n { font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 800; color: var(--accent); letter-spacing: -.02em; }
+  .stat__l { font-size: .92rem; }
+  @media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); gap: 26px 12px; } }
+
+  .offer__icon { font-size: 2rem; margin-bottom: 10px; }
+
+  .sec-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 26px; flex-wrap: wrap; }
+  .sec-head h2 { margin: 0; }
+
+  .events { display: grid; gap: 14px; }
+  .event { display: flex; gap: 20px; align-items: center; }
+  .event__date {
+    flex: 0 0 auto; width: 66px; height: 66px; border-radius: 14px;
+    background: var(--bg); border: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .event__day { font-size: 1.5rem; font-weight: 800; line-height: 1; color: var(--accent); }
+  .event__mon { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--text-mute); }
+  .event__top { display: flex; align-items: center; gap: 12px; }
+  .event__time { font-size: .86rem; }
+
+  .team--join { display: flex; flex-direction: column; justify-content: center; border-style: dashed; }
+
+  .feiern { display: grid; grid-template-columns: 1.3fr .7fr; gap: 40px; align-items: center; }
+  .feiern__list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .feiern__list li {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 18px; font-weight: 600;
+  }
+  @media (max-width: 860px) { .feiern { grid-template-columns: 1fr; } }
+
+  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .ph {
+    aspect-ratio: 4/3; border-radius: 14px; border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-mute); font-weight: 600; font-size: .92rem; text-align: center; padding: 12px;
+  }
+  .ph--0 { background: linear-gradient(135deg, #2c2114, #17110d); }
+  .ph--1 { background: linear-gradient(135deg, #2e1a16, #17110d); }
+  .ph--2 { background: linear-gradient(135deg, #241f16, #17110d); }
+  @media (max-width: 720px) { .gallery { grid-template-columns: repeat(2, 1fr); } }
+
+  .kontakt { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .kv { display: grid; grid-template-columns: 130px 1fr; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--border-soft); }
+  .kv__k { color: var(--text-mute); font-size: .82rem; text-transform: uppercase; letter-spacing: .08em; padding-top: 3px; }
+  .kv__v { font-weight: 600; }
+  .kv__link { font-weight: 700; }
+  .gold-note { color: var(--accent); font-size: .82rem; font-style: italic; font-weight: 500; }
+  .map { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); background: var(--surface); }
+  .map__img { width: 100%; height: auto; display: block; }
+  .map__bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 18px; }
+  .map__link { font-weight: 700; }
+  .map__attr { font-size: .72rem; color: var(--text-mute); }
+  .map__attr a { color: var(--text-mute); text-decoration: underline; }
+  @media (max-width: 860px) { .kontakt { grid-template-columns: 1fr; } }
+</style>
