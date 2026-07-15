@@ -4,16 +4,16 @@ export const site = {
   name: 'Dart Lounge Mitte',
   tagline: 'Bei uns dreht sich alles um Darts.',
   intro:
-    'Eingetragener Dart-Verein in Salzburg-Maxglan. Komm vorbei, wirf ein paar Pfeile, triff Leute – ganz gleich ob Anfänger oder Liga-Spieler.',
+    'Eingetragener Dart-Verein in Salzburg. Komm vorbei, wirf ein paar Pfeile, triff Leute – ganz gleich ob Anfänger oder Liga-Spieler.',
 
   // Kontakt
   phone: '0660 40 40 644',
   phoneHref: '+436604040644',
   email: 'info@dartloungemitte.at', // TODO: echte Adresse bestätigen
   // TODO: genaue Straße + Hausnummer eintragen
-  address: 'Salzburg-Maxglan',
-  addressFull: 'Adresse folgt · 5020 Salzburg-Maxglan',
-  mapsQuery: 'Dart Lounge Mitte Salzburg Maxglan',
+  address: 'Salzburg',
+  addressFull: 'Adresse folgt · 5020 Salzburg',
+  mapsQuery: 'Dart Lounge Mitte Salzburg',
 
   // Social
   facebook: 'https://www.facebook.com/DartLoungeMitte',

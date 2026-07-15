@@ -30,7 +30,7 @@ const fmt = (iso) => {
   <section class="hero">
     <div class="container hero__grid">
       <div class="hero__copy reveal">
-        <span class="eyebrow">Eingetragener Dart-Verein · Salzburg-Maxglan</span>
+        <span class="eyebrow">Eingetragener Dart-Verein · Salzburg</span>
         <h1>Bei uns dreht sich<br />alles um <span class="hl">Darts</span>.</h1>
         <p class="lead">{site.intro}</p>
         <div class="hero__cta">
@@ -185,8 +185,8 @@ const fmt = (iso) => {
       {/* Statische Karte, selbst gehostet: funktioniert ohne WebGL/JS und schickt
           keine Besucherdaten an Dritte. Kartenbild aus OpenStreetMap-Kacheln. */}
       <div class="map reveal">
-        <img class="map__img" src={url('/map-maxglan.jpg')} width="900" height="460"
-             loading="lazy" decoding="async" alt="Karte von Salzburg-Maxglan" />
+        <img class="map__img" src={url('/map-salzburg.jpg')} width="900" height="460"
+             loading="lazy" decoding="async" alt="Karte von Salzburg" />
         <div class="map__bar">
           <a class="map__link" href={`https://www.google.com/maps/search/${encodeURIComponent(site.mapsQuery)}`} target="_blank" rel="noopener">In Google Maps öffnen →</a>
           <span class="map__attr">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-Mitwirkende</span>
